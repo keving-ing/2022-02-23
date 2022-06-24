@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import it.polito.tdp.yelp.model.Archi;
 import it.polito.tdp.yelp.model.Business;
 import it.polito.tdp.yelp.model.Review;
 import it.polito.tdp.yelp.model.User;
@@ -16,8 +19,8 @@ public class YelpDao {
 	public List<Business> getBusiness(String c){
 		String sql = "SELECT * "
 				+ "FROM business "
-				+ "WHERE city = ?; "
-				+ "";
+				+ "WHERE city = ? "
+				+ "ORDER BY business_name";
 		List<Business> result = new ArrayList<Business>();
 		Connection conn = DBConnect.getConnection();
 
@@ -52,7 +55,7 @@ public class YelpDao {
 		}
 	}
 	
-	public List<Review> getReviewsVERTICI(Business b){
+	public List<Review> getReviewsVERTICI(Business b, Map<String, Review> mappa){
 		String sql = "SELECT r.* "
 				+ "FROM reviews r, business b "
 				+ "WHERE r.business_id = b.business_id AND b.business_id = ? ;";
@@ -75,6 +78,7 @@ public class YelpDao {
 						res.getInt("votes_cool"),
 						res.getString("review_text"));
 				result.add(review);
+				mappa.put(res.getString("review_id"), review);
 			}
 			res.close();
 			st.close();
@@ -144,6 +148,37 @@ public class YelpDao {
 			return null;
 		}
 		
+	}
+	
+	public List<Archi> getArchi(Business b)
+	{
+		String sql = "SELECT r1.review_id, r1.review_date, r2.review_id,  r2.review_date "
+				+ "FROM reviews r1, reviews r2 "
+				+ "WHERE r1.review_id <> r2.review_id "
+				+ "		AND r1.business_id = r2.business_id AND r1.business_id = ? "
+				+ "GROUP BY r1.review_id, r2.review_id";
+		
+		List<Archi> result = new ArrayList<Archi>();
+		Connection conn = DBConnect.getConnection();
+
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, b.getBusinessId());
+			ResultSet res = st.executeQuery();
+			while (res.next()) {
+
+				Archi a = new Archi(res.getString("r1.review_id"), res.getDate("r1.review_date").toLocalDate(), res.getString("r2.review_id"), res.getDate("r2.review_date").toLocalDate());
+				result.add(a);
+			}
+			res.close();
+			st.close();
+			conn.close();
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	

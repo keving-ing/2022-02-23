@@ -50,12 +50,17 @@ public class FXMLController {
     	if(citta != null) {
     		
     		this.cmbLocale.getItems().addAll(model.getBusiness(citta));
-    		
+    		this.btnCreaGrafo.setDisable(false);
     	}
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	this.txtResult.appendText(model.creaGrafo(this.cmbLocale.getValue() )+ "\n");
+    	this.txtResult.appendText(model.getUscenti().toString());
+    	
     	
     }
 
@@ -77,5 +82,6 @@ public class FXMLController {
     public void setModel(Model model) {
     	this.model = model;
     	this.cmbCitta.getItems().addAll(model.getCity());
+    	this.btnCreaGrafo.setDisable(true);
     }
 }
