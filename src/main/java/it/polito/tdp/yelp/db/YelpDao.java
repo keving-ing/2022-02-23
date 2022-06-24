@@ -14,7 +14,7 @@ import it.polito.tdp.yelp.model.Review;
 import it.polito.tdp.yelp.model.User;
 
 public class YelpDao {
-	
+
 	
 	public List<Business> getBusiness(String c){
 		String sql = "SELECT * "
@@ -180,8 +180,6 @@ public class YelpDao {
 			return null;
 		}
 	}
-	
-	
-	
+		
 	
 }

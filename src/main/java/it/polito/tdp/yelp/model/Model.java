@@ -1,8 +1,10 @@
 package it.polito.tdp.yelp.model;
 
 import java.time.temporal.ChronoUnit;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ public class Model {
 	YelpDao dao;
 	Graph<Review,DefaultWeightedEdge> grafo;
 	Map<String, Review> idMapReviews;
+	private List<Review> migliore;
 	
 	public Model()
 	{
@@ -83,5 +86,43 @@ public class Model {
 		
 		return listaUscentiMax;
 	}
+	
+	public List<Review> calcolaPercorso()
+	{
+		migliore = new LinkedList<Review>();
+		List<Review> parziale = new LinkedList<>();
+		cercaRicorsiva(parziale);
+		return migliore;
+	}
+
+	private void cercaRicorsiva(List<Review> parziale) {
+		 
+				//condizione di terminazione
+				if(parziale.size() > migliore.size())//la strada piú lunga é la migliore
+				{
+					migliore = new LinkedList<>(parziale);
+				}
+				
+				for(Review r1:grafo.vertexSet())
+				{
+					parziale.add(r1);
+				for(Review r:Graphs.successorListOf(this.grafo, parziale.get(parziale.size()-1))) //scorro sui vicini dell'ultimo nodo sulla lista
+				{
+					if(!parziale.contains(r))
+					{
+						if(r.getStars()>= parziale.get(parziale.size()-1).getStars())
+						{
+							parziale.add(r);
+							cercaRicorsiva(parziale);
+							parziale.remove(parziale.size()-1);
+						}
+						
+					}	
+				}
+					parziale.remove(r1);
+				}
+				
+	}
+
 	
 }
