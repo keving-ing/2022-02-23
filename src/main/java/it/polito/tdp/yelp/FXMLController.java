@@ -71,7 +71,7 @@ public class FXMLController {
     	
     	this.txtResult.clear();
     	List<Review> miglioramento = model.calcolaPercorso();
-    	txtResult.appendText("Giorni tra prima e ultima recenzione: " + ChronoUnit.DAYS.between(miglioramento.get(miglioramento.size()-1).getDate(), miglioramento.get(0).getDate()));
+    	txtResult.appendText("Giorni tra prima e ultima recenzione: " + ChronoUnit.DAYS.between(miglioramento.get(0).getDate(), miglioramento.get(miglioramento.size()-1).getDate()));
     	
     	for(Review r:miglioramento)
     	{

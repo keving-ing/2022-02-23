@@ -90,9 +90,22 @@ public class Model {
 	public List<Review> calcolaPercorso()
 	{
 		migliore = new LinkedList<Review>();
-		List<Review> parziale = new LinkedList<>();
-		cercaRicorsiva(parziale);
-		return migliore;
+		List<Review> daTornare = new LinkedList<Review>();
+		
+		
+		for(Review r1:grafo.vertexSet())
+		{
+			List<Review> parziale = new LinkedList<>();
+			parziale.add(r1);
+			cercaRicorsiva(parziale);
+			
+			if(daTornare.size()<migliore.size())
+			{
+				daTornare = new LinkedList<>(migliore);
+			}
+		}
+		
+		return daTornare;
 	}
 
 	private void cercaRicorsiva(List<Review> parziale) {
@@ -103,24 +116,21 @@ public class Model {
 					migliore = new LinkedList<>(parziale);
 				}
 				
-				for(Review r1:grafo.vertexSet())
-				{
-					parziale.add(r1);
-				for(Review r:Graphs.successorListOf(this.grafo, parziale.get(parziale.size()-1))) //scorro sui vicini dell'ultimo nodo sulla lista
-				{
-					if(!parziale.contains(r))
+					
+					for(Review r:Graphs.successorListOf(this.grafo, parziale.get(parziale.size()-1))) //scorro sui vicini dell'ultimo nodo sulla lista
 					{
-						if(r.getStars()>= parziale.get(parziale.size()-1).getStars())
+						if(!parziale.contains(r))
 						{
-							parziale.add(r);
-							cercaRicorsiva(parziale);
-							parziale.remove(parziale.size()-1);
-						}
+							if(r.getStars()>= parziale.get(parziale.size()-1).getStars())
+							{
+								parziale.add(r);
+								cercaRicorsiva(parziale);
+								parziale.remove(parziale.size()-1);
+							}
 						
-					}	
-				}
-					parziale.remove(r1);
-				}
+						}	
+					}
+
 				
 	}
 
